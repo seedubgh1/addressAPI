@@ -12,10 +12,11 @@ class QuestionAPIClient {
      * @param apiEndpoint the endpoint of the question APIs.
      * @param sessionToken valid consent token.
      */
-    constructor(apiEndpoint, sessionToken) {
+    constructor(apiEndpoint, path) {
         console.log("Creating QuestionAPIClient instance.");
-        this.sessionToken = sessionToken;
+        //this.sessionToken = sessionToken;
         this.endpoint = apiEndpoint.replace(/^https?:\/\//i, "");
+        this.path = path;
     }
 
     /**
@@ -24,8 +25,9 @@ class QuestionAPIClient {
      * This will retrieve the full address of a device.
      * @return {Promise} promise for the request in flight.
      */
-    getFullAddress() {
-        const options = this.__getRequestOptions(`/v1/devices/${this.deviceId}/settings/address`);
+    //getFullAddress() {
+    get() {
+        const options = this.__getRequestOptions(this.path);
 
         return new Promise((fulfill, reject) => {
             this.__handleQuestionApiRequest(options, fulfill, reject);
@@ -57,17 +59,18 @@ class QuestionAPIClient {
      */
     __handleQuestionApiRequest(requestOptions, fulfill, reject) {
         Https.get(requestOptions, (response) => {
-            console.log(`Device Address API responded with a status code of : ${response.statusCode}`);
+            console.log(`Question API responded with a status code of : ${response.statusCode}`);
 
             response.on('data', (data) => {
                 let responsePayloadObject = JSON.parse(data);
 
-                const deviceAddressResponse = {
+                const questionResponse = {
                     statusCode: response.statusCode,
-                    address: responsePayloadObject
+                    //address: responsePayloadObject
+                    payload: responsePayloadObject
                 };
 
-                fulfill(deviceAddressResponse);
+                fulfill(questionResponse);
             });
         }).on('error', (e) => {
             console.error(e);
@@ -83,12 +86,13 @@ class QuestionAPIClient {
      */
     __getRequestOptions(path) {
         return {
-            hostname: this.endpoint,
+            hostname: this.endpoint, 
             path: path,
             method: 'GET',
-            'headers': {
-                'Authorization': 'Bearer ' + this.sessionToken
-            }
+            //port: '',
+            //'headers': {
+            //    'Authorization': 'Bearer ' + this.sessionToken
+            //}
         };
     }
 }
