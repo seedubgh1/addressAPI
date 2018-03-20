@@ -3,7 +3,8 @@
 const Https = require('https');
 
 /**
- * This is a small wrapper client for the Alexa Address API.
+ * This is a small wrapper client for a trivia question API,
+ * used for an Alexa trivia skill
  */
 class QuestionAPIClient {
 
